@@ -1,30 +1,24 @@
-import {putMessage} from "../slices/messageSlice.ts";
-import {putWeatherInfo} from "../slices/weatherSlice.ts";
 import {api_key, base_url} from "../../utils/constants.ts";
-import {AppDispatch} from "../../app/store.ts";
+import {createAsyncThunk} from "@reduxjs/toolkit";
 
-export const fetchWeather = (city: string) => {
-    return async (dispatch: AppDispatch) => {
-        dispatch(putMessage('Pending...'))
+export const fetchWeather = createAsyncThunk(
+    "weather/fetchWeather",
+    async (city: string, { rejectWithValue }) => {
         try {
-            const response = await fetch(`${base_url}?q=${city}&appid=${api_key}&units=metric`)
+            const response = await fetch(`${base_url}?q=${city}&appid=${api_key}&units=metric`);
             if (!response.ok) {
-                throw new Error('Enter correct city name');
+                throw new Error("Enter correct city name");
             }
             const data = await response.json();
-            dispatch(putWeatherInfo({
+            return {
                 country: data.sys.country,
                 city: data.name,
                 temp: data.main.temp,
                 pressure: data.main.pressure,
-                sunset: data.sys.sunset * 1000
-            }));
-            dispatch(putMessage(''));
-        } catch (e) {
-            console.log(e);
-            if (e instanceof Error) {
-                dispatch(putMessage(e.message));
-            }
+                sunset: data.sys.sunset * 1000,
+            };
+        } catch (error) {
+            return rejectWithValue(error instanceof Error ? error.message : "Unknown error");
         }
     }
-}
+);

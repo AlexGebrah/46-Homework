@@ -1,20 +1,22 @@
 import {useAppSelector} from "../app/hooks.ts";
 
 const Weather = () => {
-    const message = useAppSelector(state => state.message);
-    const weather = useAppSelector(state => state.weatherInfo);
+   const weather = useAppSelector(state => state.weatherInfo);
+   const {status, error, city, country, temp, pressure, sunset} = weather;
 
     return (
         <div className={'infoWeath'}>
-            {!message &&
+            {status === 'start' && <p>Enter city name</p>}
+            {status === "pending" && <p>Loading...</p>}
+            {status === "failed" && <p>Error: {error}</p>}
+            {status === "succeeded" && (
                 <>
-                    <p>Location: {weather.country}, {weather.city}</p>
-                    <p>Temp: {weather.temp}</p>
-                    <p>Pressure: {weather.pressure}</p>
-                    <p>Sunset: {new Date(weather.sunset!).toLocaleTimeString()}</p>
+                    <p>Location: {country}, {city}</p>
+                    <p>Temp: {temp}</p>
+                    <p>Pressure: {pressure}</p>
+                    <p>Sunset: {new Date(sunset!).toLocaleTimeString()}</p>
                 </>
-            }
-            {message}
+            )}
         </div>
     )
 }
