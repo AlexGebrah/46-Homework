@@ -17,14 +17,18 @@ const Weather = () => {
         return <div className={'infoWeath'}>Enter correct city name</div>
     }
 
+    const sunsetTime = data?.sunset
+        ? new Date(data.sunset * 1000).toLocaleTimeString()
+        : 'Unknown';
+
     return (
         <div className={'infoWeath'}>
             {!!data &&
                 <>
-                    <p>Location: {data.sys.country}, {data.name}</p>
-                    <p>Temp: {data.main.temp}</p>
-                    <p>Pressure: {data.main.pressure}</p>
-                    <p>Sunset: {new Date(data.sys.sunset! * 1000).toLocaleTimeString()}</p>
+                    <p>Weather in {data?.city}, {data?.country}</p>
+                    <p>Temperature: {data?.temp}°C</p>
+                    <p>Pressure: {data?.pressure} hPa</p>
+                    <p>Sunset: {sunsetTime}</p>
                 </>}
         </div>
     )
